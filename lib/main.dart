@@ -1,6 +1,7 @@
 import 'package:carrot_market_sample/page/app.dart';
 import 'package:flutter/material.dart';
 
+
 void main() {
   runApp(MyApp());
 }
@@ -20,3 +21,4 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
