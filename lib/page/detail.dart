@@ -20,9 +20,7 @@ class _DetailContentViewState extends State<DetailContentView> {
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
-    size = MediaQuery
-        .of(context)
-        .size;
+    size = MediaQuery.of(context).size;
     imgList = [
       {"id": "0", "url": widget.data["image"]},
       {"id": "1", "url": widget.data["image"]},
@@ -113,9 +111,7 @@ class _DetailContentViewState extends State<DetailContentView> {
           // )
           CircleAvatar(
             radius: 25,
-            backgroundImage: Image
-                .asset("assets/images/user.png")
-                .image,
+            backgroundImage: Image.asset("assets/images/user.png").image,
           ),
           SizedBox(width: 10),
           Column(
@@ -129,7 +125,9 @@ class _DetailContentViewState extends State<DetailContentView> {
                   // color: Colors.black,
                 ),
               ),
-              Text('제주시 도담동',)
+              Text(
+                '제주시 도담동',
+              )
             ],
           ),
           Expanded(
@@ -142,11 +140,144 @@ class _DetailContentViewState extends State<DetailContentView> {
     );
   }
 
+  Widget _line() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 15),
+      height: 1,
+      color: Colors.grey.withOpacity(0.3),
+    );
+  }
+
+  Widget _contentDetail() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SizedBox(height: 20),
+          Text(
+            widget.data["title"],
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
+          ),
+          Text(
+            "디지털/가전, 22시간 전",
+            style: TextStyle(
+              color: Colors.grey,
+              fontSize: 12,
+            ),
+          ),
+          SizedBox(
+            height: 15,
+          ),
+          Text(
+            "선물받은 제품이고 \n상품 꺼내보기만 했습니다. \n직거래만 합니다",
+            style: TextStyle(
+              fontSize: 15,
+              height: 1.5,
+            ),
+          ),
+          SizedBox(
+            height: 15,
+          ),
+          Text(
+            "채팅 3,   관심 20,   조회 295",
+            style: TextStyle(
+              color: Colors.grey,
+              fontSize: 12,
+            ),
+          ),
+          SizedBox(
+            height: 15,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _otherCellContents() {
+    return Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            "판매자님의 판매 상품",
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Text(
+            "모두 보기",
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _bodyWidget() {
-    return Column(
-      children: [
-        _makeSliderImage(),
-        _sellerSimpleInfo(),
+    return CustomScrollView(
+      slivers: [
+        SliverList(
+          delegate: SliverChildListDelegate(
+            [
+              _makeSliderImage(),
+              _sellerSimpleInfo(),
+              _line(),
+              _contentDetail(),
+              _line(),
+              _otherCellContents(),
+            ],
+          ),
+        ),
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          sliver: SliverGrid(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 10,
+            ),
+            delegate: SliverChildListDelegate(List.generate(20, (index) {
+              return Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Container(
+                        color: Colors.grey,
+                        height: 120,
+                      ),
+                    ),
+                    Text(
+                      "상품 제목",
+                      style: TextStyle(
+                        fontSize: 14,
+                      ),
+                    ),
+                    Text(
+                      "금액",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                // height: 120,
+                // color: Colors.blue,
+              );
+            }).toList()),
+          ),
+        ),
       ],
     );
   }
