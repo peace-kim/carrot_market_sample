@@ -21,10 +21,10 @@ class _AppState extends State<App> {
     _currentPageIndex = 0;
   }
 
-  final oCcy = new NumberFormat("#,###", "ko_KR");
-  String calcStringToWon(String priceString) {
-    return "${oCcy.format(int.parse(priceString))}원";
-  }
+  // final oCcy = new NumberFormat("#,###", "ko_KR");
+  // String calcStringToWon(String priceString) {
+  //   return "${oCcy.format(int.parse(priceString))}원";
+  // }
 
   Widget _bodyWidget() {
     switch (_currentPageIndex) {
@@ -84,7 +84,7 @@ class _AppState extends State<App> {
         selectedFontSize: 12,
         currentIndex: _currentPageIndex,
         selectedItemColor: Colors.black,
-        selectedLabelStyle: TextStyle(color: Colors.black),
+        // selectedLabelStyle: TextStyle(color: Colors.black),
         items: [
           _bottomNavigationBarItem("home", "홈"),
           _bottomNavigationBarItem("notes", "동네생활"),

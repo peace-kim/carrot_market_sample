@@ -2,6 +2,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:carrot_market_sample/components/manor_temperature.dart';
 import 'package:flutter/material.dart';
 
+
+
 class DetailContentView extends StatefulWidget {
   Map<String, String> data;
 

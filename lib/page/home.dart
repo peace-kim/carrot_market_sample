@@ -24,7 +24,6 @@ class _HomeState extends State<Home> {
     currentLocation = "ara";
   }
 
-
   @override
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
