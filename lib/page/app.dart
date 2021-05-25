@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+import 'favorite.dart';
 import 'home.dart';
 
 class App extends StatefulWidget {
@@ -45,7 +46,7 @@ class _AppState extends State<App> {
         break;
 
       case 4:
-        return Container();
+        return MyFavoriteContents();
         break;
     }
 
