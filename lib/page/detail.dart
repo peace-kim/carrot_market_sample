@@ -1,8 +1,9 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:carrot_market_sample/components/manor_temperature.dart';
+import 'package:carrot_market_sample/repository/contents_repository.dart';
+import 'package:carrot_market_sample/utils/data_utils.dart';
 import 'package:flutter/material.dart';
-
-
+import 'package:flutter_svg/svg.dart';
 
 class DetailContentView extends StatefulWidget {
   Map<String, String> data;
@@ -13,10 +14,46 @@ class DetailContentView extends StatefulWidget {
   _DetailContentViewState createState() => _DetailContentViewState();
 }
 
-class _DetailContentViewState extends State<DetailContentView> {
+class _DetailContentViewState extends State<DetailContentView>
+    with SingleTickerProviderStateMixin {
+  final scaffoldkey = GlobalKey<ScaffoldState>();
+  ContentsRepository contentsRepository;
   Size size;
   List<Map<String, String>> imgList;
   int _current;
+  double scrollpositionToAplha = 0;
+  ScrollController _controller = ScrollController();
+  AnimationController _animationController;
+  Animation _colorTween;
+  bool isMyFavoriteContent = false;
+
+  @override
+  void initState() {
+    contentsRepository = ContentsRepository();
+    // isMyFavoriteContent = false;
+    _animationController = AnimationController(vsync: this);
+    _colorTween = ColorTween(begin: Colors.white, end: Colors.black)
+        .animate(_animationController);
+    _controller.addListener(() {
+      setState(() {
+        if (_controller.offset > 255) {
+          scrollpositionToAplha = 255;
+        } else {
+          scrollpositionToAplha = _controller.offset;
+        }
+        _animationController.value = scrollpositionToAplha / 255;
+      });
+    });
+    _loadMyFavoriteContentState();
+  }
+
+  _loadMyFavoriteContentState() async {
+    bool ck = await contentsRepository.isMyFavoriteContents(widget.data["cid"]);
+    setState(() {
+      isMyFavoriteContent = ck;
+    });
+    print(ck);
+  }
 
   @override
   void didChangeDependencies() {
@@ -32,18 +69,34 @@ class _DetailContentViewState extends State<DetailContentView> {
     ];
   }
 
+  Widget _makeIcon(IconData icon) {
+    return AnimatedBuilder(
+      animation: _colorTween,
+      builder: (context, child) => Icon(icon, color: _colorTween.value),
+    );
+  }
+
   Widget _appbarWidget() {
     return AppBar(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.white.withAlpha(scrollpositionToAplha.toInt()),
       elevation: 0,
       leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: Icon(Icons.arrow_back, color: Colors.white)),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        icon: _makeIcon(Icons.arrow_back),
+      ),
       actions: [
-        IconButton(onPressed: () {}, icon: Icon(Icons.share)),
-        IconButton(onPressed: () {}, icon: Icon(Icons.more_vert)),
+        IconButton(
+          onPressed: () {},
+          icon: _makeIcon(Icons.share),
+          color: Colors.white,
+        ),
+        IconButton(
+          onPressed: () {},
+          icon: _makeIcon(Icons.more_vert),
+          color: Colors.white,
+        ),
       ],
     );
   }
@@ -226,6 +279,7 @@ class _DetailContentViewState extends State<DetailContentView> {
 
   Widget _bodyWidget() {
     return CustomScrollView(
+      controller: _controller,
       slivers: [
         SliverList(
           delegate: SliverChildListDelegate(
@@ -286,15 +340,99 @@ class _DetailContentViewState extends State<DetailContentView> {
 
   Widget _bottomBarWidget() {
     return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 15),
       width: size.width,
       height: 55,
-      color: Colors.red,
+      // color: Colors.red,
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: () async {
+              if (isMyFavoriteContent) {
+                //제거
+                await contentsRepository.deleteMyFavoriteContents(widget.data['cid']);
+              } else {
+                await contentsRepository.addMyFavoriteContent(widget.data);
+              }
+
+              setState(() {
+                isMyFavoriteContent = !isMyFavoriteContent;
+              });
+
+              scaffoldkey.currentState.showSnackBar(
+                SnackBar(
+                  duration: Duration(milliseconds: 1000),
+                  content: Text(
+                    isMyFavoriteContent ? "관심목록에 추가됐습니다" : "관심목록에서 제가됐습니다.",
+                  ),
+                ),
+              );
+            },
+            child: SvgPicture.asset(
+              isMyFavoriteContent
+                  ? "assets/svg/heart_on.svg"
+                  : "assets/svg/heart_off.svg",
+              // "assets/svg/heart_on.svg",
+              width: 25,
+              height: 25,
+              color: Color(0xfff08f4f),
+            ),
+          ),
+          Container(
+              margin: const EdgeInsets.only(left: 15, right: 10),
+              width: 1,
+              height: 40,
+              color: Colors.grey.withOpacity(0.3)),
+          Column(
+            children: [
+              Text(
+                DataUtils.calcStringToWon(widget.data["price"]),
+                style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                "가격 제안 불가",
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey,
+                ),
+              ),
+            ],
+          ),
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 7),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: Color(0xfff08f4f),
+                  ),
+                  child: Text(
+                    "채팅으로 거래하기",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldkey,
       extendBodyBehindAppBar: true,
       appBar: _appbarWidget(),
       body: _bodyWidget(),
