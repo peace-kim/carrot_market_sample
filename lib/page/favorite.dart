@@ -2,7 +2,6 @@ import 'package:carrot_market_sample/repository/contents_repository.dart';
 import 'package:carrot_market_sample/utils/data_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-
 import 'detail.dart';
 
 class MyFavoriteContents extends StatefulWidget {
@@ -13,11 +12,10 @@ class MyFavoriteContents extends StatefulWidget {
 class _MyFavoriteContentsState extends State<MyFavoriteContents> {
   ContentsRepository contentsRepository;
   @override
-  void initState() { 
+  void initState() {
     super.initState();
     contentsRepository = ContentsRepository();
   }
-  
 
   Widget _appbarWidget() {
     return AppBar(
@@ -28,7 +26,7 @@ class _MyFavoriteContentsState extends State<MyFavoriteContents> {
     );
   }
 
-    Widget _bodyWidget() {
+  Widget _bodyWidget() {
     return FutureBuilder(
       future: _loadMyFavoriteContentList(),
       builder: (context, snapshot) {
@@ -52,7 +50,6 @@ class _MyFavoriteContentsState extends State<MyFavoriteContents> {
   Future<List<dynamic>> _loadMyFavoriteContentList() async {
     return await contentsRepository.loadFavoriteContents();
   }
-
 
   _makeDataList(List<dynamic> datas) {
     return ListView.separated(
@@ -141,7 +138,6 @@ class _MyFavoriteContentsState extends State<MyFavoriteContents> {
       },
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
